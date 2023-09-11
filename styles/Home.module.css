@@ -1,5 +1,11 @@
+.main{
+  
+  margin: 0;
+}
+
 header{
-  width: 100%;
+  width: 100vh;
   height: 70px;
   background-color: #021334;
+  display: flex;
 }
