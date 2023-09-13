@@ -1,58 +1,40 @@
-import React from 'react';
-import styles from '../styles/Home.module.css';
-import Movie from './Movie';
-
+import React from "react";
+import styles from "../styles/Home.module.css";
+import Movie from "./Movie";
+import { useEffect, useState } from "react";
 
 function Home() {
-  const moviesData = [
+  const [moviesData, setMoviesData] = useState([]);
 
-    {
-      title: 'Forrest Gump',
-      poster: 'forrestgump.jpg',
-      voteAverage: 9.2,
-      voteCount: 22_705,
-      overview:
-        'A man with a low IQ has accomplished great things in his life and been present during significant historic events—in each case.',
-    },
+  const API_KEY = "691f574e729240538ef09fcb461dedc3";
 
-    {
-      title: 'The Dark Knight',
-      poster: 'thedarkknight.jpg',
-      voteAverage: 8.5,
-      voteCount: 27_547,
-      overview:
-        'Batman raises the stakes in his war on crime and sets out to dismantle the remaining criminal organizations that plague the streets.',
-    },
+  useEffect(() => {
+    fetch(
+      // "https://api.themoviedb.org/3/discover/movie?api_key=691f574e729240538ef09fcb461dedc3"
+      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}`
+    )
+      .then((response) => response.json()) // on convertit la première réponse au format JSON
+      .then((data) => {
+        const formatedData = data.results.map((movie, i) => {
+          //a l'arrivee du fetch on formate la data
+          const poster = "https://image.tmdb.org/t/p/w500/" + movie.poster_path; //movie c'est chaque film du tableau
+          let overview = movie.overview;
+          if (overview.length > 250) {
+              overview = overview.slice(0, 250) + "...";
+          }
+          return {
+            poster,
+            overview,
+            title: movie.title,
+            voteAverage: movie.vote_average,
+            voteCount: movie.vote_count,
+          };
+        });
+        setMoviesData(formatedData);
+        console.log(data);
+      });
+  }, []);
 
-    {
-      title: 'Your name',
-      poster: 'yourname.jpg',
-      voteAverage: 8.5,
-      voteCount: 8_691,
-      overview:
-        'High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places.',
-    },
-
-    {
-      title: 'Iron Man',
-      poster: 'ironman.jpg',
-      voteAverage: 7.6,
-      voteCount: 22_7726,
-      overview:
-        'After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.',
-    },
-
-    {
-      title: 'Inception',
-      poster: 'inception.jpg',
-      voteAverage: 8.4,
-      voteCount: 31_546,
-      overview:
-        'Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life.',
-    },
-
-
-  ];
   //on va boucler dans chaque élément de l'objet, movie avec une clé pour qu'on ait pas de warning
   //movie correspond à chaque objet du tableau (ou data)
   const movies = moviesData.map((data, i) => {
